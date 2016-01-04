@@ -2,14 +2,14 @@
 author:
   email: muh.muhten@gmail.com
   name: Michael Zuo
-description: 'How to install CoreOS on your KVM Linode.'
-keywords: 'coreos,custom distro,custom distribution,kvm'
+description: 'Install CoreOS on Your KVM Linode.'
+keywords: 'custom linux distro,kvm,disk image,coreos,Finnix,LISH,partition table'
 license: '[CC BY-ND 3.0](http://creativecommons.org/licenses/by-nd/3.0/us/)'
 modified: 'Monday, November 9th, 2015'
 modified_by:
   name: Michael Zuo
 published: 'Monday, November 9th, 2015'
-title: Run a Custom Distro on a KVM Linode
+title: Install CoreOS on a KVM Linode
 ---
 
 *This is a Linode Community guide. [Write for us](/docs/contribute) and earn $250 per published guide.*
@@ -25,9 +25,9 @@ This method of installing CoreOS creates a partition table on the disk image, wh
 ## Before you begin
 
 {: .note}
-> These instructions perform **destructive** operations on your Linode. You should not attempt to install CoreOS on a Linode with data you'd like to keep. You may wish to [use a second Linode and transfer your data after installation](/docs/security/recovering-from-a-system-compromise#using-a-second-linode).
+> These instructions perform **destructive** operations on your Linode. You should not attempt to install CoreOS on a Linode with data you'd like to preserve. You may wish to [use a second Linode and transfer your data after installation](/docs/security/recovering-from-a-system-compromise#using-a-second-linode).
 
-You should prepare a [CoreOS-style cloud-config file](https://coreos.com/os/docs/latest/cloud-config.html) with authentication details. This is because CoreOS by default configures no way to log in except by supplying an option to the kernel command line.
+You should prepare a [CoreOS-style cloud-config file](https://coreos.com/os/docs/latest/cloud-config.html) with authentication details because by default CoreOS configures no means by which to log in except by supplying an option to the kernel command line.
 
 At minimum, you should have an `authorized_keys` file available.
 
@@ -43,7 +43,7 @@ At minimum, you should have an `authorized_keys` file available.
   
     [![Specify disk name and size](/docs/assets/coreos-disk-image.png)](/docs/assets/coreos-disk-image.png)
 
-   If you're not sure how big your disk image needs to be, you may wish to choose a small size so that you can grow the disk later. You will not be able to shrink the disk image.
+   If you're not sure how big your disk image needs to be, you may wish to choose a small size so that you can grow the disk later. You will not be able to shrink the disk image after it has been generated.
 
 4. Return to the *Linode Dashboard*, and select the **Rescue** tab. Check to make sure the disk image you created is set as `/dev/sda`, then click the **Reboot into Rescue Mode** button. Your Linode will now boot into the Finnix recovery image. Use the [Lish](/docs/networking/using-the-linode-shell-lish) shell to access your Linode.
 
@@ -59,7 +59,7 @@ CoreOS can be installed using a self-contained [script](https://github.com/coreo
         apt-get update
         apt-get install ca-certificates
 
-2. Now download the script from GitHub and mark it executable:
+2. Now, download the script from GitHub and mark it executable:
 
         wget https://raw.githubusercontent.com/coreos/init/master/bin/coreos-install
         chmod +x coreos-install
@@ -68,7 +68,7 @@ CoreOS can be installed using a self-contained [script](https://github.com/coreo
 
         ./coreos-install -h
 
-Now you will want to copy your cloud-config file to your Linode. It's probably most easy to simply `cat > cloud-config.yml` and paste into your Lish shell.  However, if you prefer, you can run the following command to start the SSH server to securely copy your cloud-config file. (Note that you will need to set up access credentials, e.g. SSH keys or a password, separately.)
+You will want to copy your cloud-config file to your Linode. It's easiest to simply `cat > cloud-config.yml` and paste into your Lish shell.  However, if you prefer, you can run the following command to start the SSH server to securely copy your cloud-config file. (Note that you will need to set up access credentials, e.g. SSH keys or a password, separately.)
 
         service ssh start
 
@@ -80,8 +80,7 @@ Now you will want to copy your cloud-config file to your Linode. It's probably m
 
    You can also supply any other options (see `coreos-install -h`). If you do not want verbose output, you can leave out the `-v` flag.
 
-2. ADVANCED: at this point, you can modify the image by mounting `/dev/sda9`.  For example, if you have not provided a cloud-config file, you can add an
-`authorized_keys` for the `core` user as follows:
+2. ADVANCED: at this point, you can modify the image by mounting `/dev/sda9`.  For example, if you have not provided a cloud-config file, you can add an `authorized_keys` for the `core` user as follows:
 
         mount /dev/sda9
         cat > /media/sda9/home/core/.ssh/authorized_keys <<EOF
@@ -103,9 +102,9 @@ Now you will want to copy your cloud-config file to your Linode. It's probably m
 
 4. All other settings can be left in their default state.
 
-5. Return to the *Linode Dashboard*, select the new configuration profile, and click **Reboot**
+5. Return to the *Linode Dashboard*, select the new configuration profile, and click **Reboot**.
 
-## Logging in to your Linode running CoreOS
+## Log in to your Linode running CoreOS
 
 1. With Lish open, you should see your Linode booting into CoreOS, finishing with a list of SSH host keys and a login prompt, something similar to:
 
@@ -121,4 +120,4 @@ Now you will want to copy your cloud-config file to your Linode. It's probably m
 
 ## Caveats
 
-When using this method, the CoreOS installer creates a partition table on the disk image, which will interfere with the Backups service, as the disk image will not be directly mountable. Unlike the case with most partitioned images, you *will* be able to resize the disk image holding a CoreOS system; however, it can only grow, not shrink. CoreOS will resize its root partition to fill the disk on next boot.
+When using this method, the CoreOS installer creates a partition table on the disk image, which will interfere with the Backups service because the disk image will not be directly mountable. Unlike the case with most partitioned images, you *will* be able to resize the disk image holding a CoreOS system; however, it can only grow, not shrink. CoreOS will resize its root partition to fill the disk on next boot.
